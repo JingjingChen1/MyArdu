@@ -1,4 +1,7 @@
-#include <GCS.h>
+
+#include <AP_HAL/AP_HAL.h>
+#include <AP_Math/AP_Math.h>
+#include <GCS_MAVLink/GCS.h>
 #include "Copter.h"
 
 namespace chenjingjing {
@@ -19,7 +22,7 @@ static uint64_t start_time = 0;   // 当前阶段的开始时间
 
 // 起飞函数
 bool takeoff() {
-    if (!ap.vehicle.set_mode(MODE_GUIDED)) { // 切换到 GUIDED 模式
+    if (!vehicle.set_mode(MODE_GUIDED)) { // 切换到 GUIDED 模式
         GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "无法切换到 GUIDED 模式");
         return false;
     }
