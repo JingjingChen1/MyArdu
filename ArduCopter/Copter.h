@@ -174,6 +174,12 @@
 #endif
 #include "mode.h"
 
+//chenjingjing
+#ifndef RUN_CUSTOM_FLIGHT_TASK 
+#define RUN_CUSTOM_FLIGHT_TASK 1
+#endif
+
+
 class Copter : public AP_Vehicle {
 public:
     friend class GCS_MAVLINK_Copter;

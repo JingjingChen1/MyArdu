@@ -36,6 +36,9 @@ def build(bld):
         program_groups=['bin', 'copter'],
         use=vehicle + '_libs',
         defines=['FRAME_CONFIG=MULTICOPTER_FRAME'],
+        source=[
+            'FlightTaskTest.cpp',  # flighttask test文件
+        ],
         )
 
     bld.ap_program(
@@ -43,4 +46,7 @@ def build(bld):
         program_groups=['bin', 'heli'],
         use=vehicle + '_libs',
         defines=['FRAME_CONFIG=HELI_FRAME'],
+        source=[
+            'FlightTaskTest.cpp',  # flighttask test文件
+        ],
         )

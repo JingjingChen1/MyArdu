@@ -1,6 +1,11 @@
 #include "Copter.h"
 #include <AP_ESC_Telem/AP_ESC_Telem.h>
 
+//chenjingjing
+#if RUN_CUSTOM_FLIGHT_TASK 
+    #include <FlightTaskTest.cpp>
+#endif
+
 /*****************************************************************************
 *   The init_ardupilot function processes everything we need for an in - air restart
 *        We will determine later if we are actually on the ground and process a
@@ -204,6 +209,12 @@ void Copter::init_ardupilot()
 
     // flag that initialisation has completed
     ap.initialised = true;
+
+
+    //chenjingjing: add custom flight task
+    #if RUN_CUSTOM_FLIGHT_TASK 
+    hal.scheduler->register_timer_process(chenjingjing::flight_task_update);
+    #endif
 }
 
 
