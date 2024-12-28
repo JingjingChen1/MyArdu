@@ -6,17 +6,18 @@
 
 namespace chenjingjing {
 
+void flight_task_update();
 
-#define TIME_RUN_TASK_ONCE 200 //任务执行频率（毫秒）
+// #define TIME_RUN_TASK_ONCE 200 //任务执行频率（毫秒）
 
 // 参数配置
-constexpr float TAKEOFF_ALTITUDE = 20.0f;  // 起飞高度 (米)
-constexpr float MAX_SPEED = 16.0f;         // 飞行最大速度 (米/秒)
-constexpr uint32_t FORWARD_DURATION = 6000; // 向前飞行持续时间 (毫秒)
+// constexpr float TAKEOFF_ALTITUDE = 20.0f;  // 起飞高度 (米)
+// constexpr float MAX_SPEED = 16.0f;         // 飞行最大速度 (米/秒)
+// constexpr uint32_t FORWARD_DURATION = 6000; // 向前飞行持续时间 (毫秒)
 
 // 状态变量
-static uint8_t flight_phase = 0;  // 飞行阶段：0=起飞，1=悬停，2=向前飞行，3=降落
-static uint64_t start_time = 0;   // 当前阶段的开始时间
+// static uint8_t flight_phase = 0;  // 飞行阶段：0=起飞，1=悬停，2=向前飞行，3=降落
+// static uint64_t start_time = 0;   // 当前阶段的开始时间
 
 
 
@@ -60,7 +61,7 @@ static uint64_t start_time = 0;   // 当前阶段的开始时间
 
 
 // 定义全局变量来记录上一次任务执行的时间点
-static uint64_t last_task_time = 0;  // 上一次任务执行时间（毫秒）
+// static uint64_t last_task_time = 0;  // 上一次任务执行时间（毫秒）
 
 // 主任务函数: 负责执行自定义飞控任务
 void flight_task_update() {
