@@ -183,6 +183,12 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
 #if HAL_SPRAYER_ENABLED
     SCHED_TASK_CLASS(AC_Sprayer,           &copter.sprayer,               update,         3,  90,  54),
 #endif
+
+//chenjingjing
+#if RUN_CUSTOM_FLIGHT_TASK 
+    SCHED_TASK(my_flight_task_update, 10,    100,  50),
+#endif
+
     SCHED_TASK(three_hz_loop,          3,     75, 57),
 #if AP_SERVORELAYEVENTS_ENABLED
     SCHED_TASK_CLASS(AP_ServoRelayEvents,  &copter.ServoRelayEvents,      update_events, 50,  75,  60),
@@ -640,6 +646,7 @@ void Copter::loop_rate_logging()
     }
 }
 
+
 // ten_hz_logging_loop
 // should be run at 10hz
 void Copter::ten_hz_logging_loop()
@@ -703,6 +710,7 @@ void Copter::ten_hz_logging_loop()
         camera_mount.write_log();
     }
 #endif
+
 }
 
 // twentyfive_hz_logging - should be run at 25hz

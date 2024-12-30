@@ -1127,6 +1127,15 @@ private:
     bool started_rate_thread;
     bool using_rate_thread;
 
+    //chenjingjing: FlightTaskTest.cpp
+#if RUN_CUSTOM_FLIGHT_TASK 
+    void my_flight_task_update();
+    bool my_takeoff();
+    void my_hover();
+    void my_fly_forward();
+    bool my_land();
+#endif
+
 public:
     void failsafe_check();      // failsafe.cpp
 };
