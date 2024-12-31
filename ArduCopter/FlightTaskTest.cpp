@@ -61,17 +61,18 @@
         }
         case 3:
         { // 向前飞行阶段
-            fly_forward();
+            my_fly_forward();
             if (AP_HAL::millis64() - start_time > FORWARD_DURATION)
             { // 飞行 6 秒
-
-
-
-RR
-
-      // 降落阶段
-            hover(); // 短暂悬停以稳定
-            if (land())
+                GCS_SEND_TEXT(MAV_SEVERITY_INFO, "准备降落...");
+                flight_phase = 4;
+            }
+            break;
+        }
+        case 4:
+        { // 降落阶段
+            my_hover(); // 短暂悬停以稳定
+            if (my_land())
             {
                 flight_phase = 5;
             }
@@ -97,9 +98,9 @@ RR
             return false;
         }
 
-        // 解锁电机 (ARM)
-        if (!copter.arming.arm(AP_Arming::Method::UNKNOWN)) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "无法解锁电机");
+        //检查电机解锁情况
+        if (!copter.arming.armed) {
+            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "电机尚未解锁!");
             return false;
         }
 
@@ -130,7 +131,7 @@ RR
     // 降落函数
     bool Copter::my_land() {
         // 切换到 LAND 模式
-        if (!copter.set_mode(Mode::Number::LAND, ModeReason::MODE_USER_REQUEST)) {
+        if (!copter.set_mode(Mode::Number::LAND, ModeReason::UNKNOWN)) {
             GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "无法切换到 LAND 模式");
             return false;
         }
