@@ -96,8 +96,8 @@
         }
 
         //检查电机解锁情况
-        if (!copter.arming.armed) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: motors has not been armed yet!");
+        if (!copter.arming.arm(AP_Arming::Method::MAVLINK, true)) {
+            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: motors arm failed!");
             return false;
         }
 
