@@ -1,6 +1,3 @@
-// #include <AP_HAL/AP_HAL.h>
-// #include <AP_Math/AP_Math.h>
-// #include <GCS_MAVLink/GCS.h>
 #include "Copter.h"
 
 #if RUN_CUSTOM_FLIGHT_TASK 
@@ -27,7 +24,7 @@
                 return;
             }
             flight_phase = 1;
-            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "起飞阶段开始...");
+            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: The copter is taking off...");
             break;
         }
         case 1:
@@ -37,13 +34,13 @@
 
                 if (current_altitude >= TAKEOFF_ALTITUDE - 0.5f)
                 { // 判定达到目标高度（允许 0.5 米误差）
-                    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "达到目标高度，开始悬停...");
+                    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: reach target altitude, start hover...");
                     my_hover();
                     start_time = AP_HAL::millis64(); // 记录悬停开始时间
                     flight_phase = 2;
                 }
             } else{
-                GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "无法获取当前高度");
+                GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to get current altitude");
             }
             
             break;
@@ -53,7 +50,7 @@
             my_hover();
             if (AP_HAL::millis64() - start_time > 5000)
             { // 悬停 5 秒
-                GCS_SEND_TEXT(MAV_SEVERITY_INFO, "开始向前飞行...");
+                GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: start to fly forward...");
                 start_time = AP_HAL::millis64(); // 记录向前飞行的开始时间
                 flight_phase = 3;
             }
@@ -64,7 +61,7 @@
             my_fly_forward();
             if (AP_HAL::millis64() - start_time > FORWARD_DURATION)
             { // 飞行 6 秒
-                GCS_SEND_TEXT(MAV_SEVERITY_INFO, "准备降落...");
+                GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: start to land...");
                 flight_phase = 4;
             }
             break;
@@ -80,7 +77,7 @@
         }
         case 5:
         { // 任务完成
-            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "自定义飞行任务完成");
+            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: task finished!");
             break;
         }
         default:
@@ -94,23 +91,24 @@
     bool Copter::my_takeoff() {
         // 切换到 GUIDED 模式
         if (!copter.set_mode(Mode::Number::GUIDED, ModeReason::STARTUP)) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "无法切换到 GUIDED 模式");
+            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to change mode to GUIDED!");
             return false;
         }
 
         //检查电机解锁情况
         if (!copter.arming.armed) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "电机尚未解锁!");
+            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: motors has not been armed yet!");
             return false;
         }
 
         // 启动起飞到指定高度
         if (!copter.start_takeoff(TAKEOFF_ALTITUDE)) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "无法启动起飞");
+            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to takeoff!");
             return false;
         }
 
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "起飞中...");
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: taking off...");
+        // return false;
         return true;
     }
 
@@ -118,25 +116,25 @@
     void Copter::my_hover() {
         // 设置目标速度为 0，保持悬停
         copter.set_target_velocity_NED(Vector3f(0.0f, 0.0f, 0.0f));
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "悬停中...");
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: hovering...");
     }
 
     // 向前飞行函数
     void Copter::my_fly_forward() {
         // 设置目标速度向前飞行，保持高度
         copter.set_target_velocity_NED(Vector3f(MAX_SPEED, 0.0f, 0.0f));
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "向前飞行中...");
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: flying forward...");
     }
 
     // 降落函数
     bool Copter::my_land() {
         // 切换到 LAND 模式
         if (!copter.set_mode(Mode::Number::LAND, ModeReason::UNKNOWN)) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "无法切换到 LAND 模式");
+            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to change mode to LAND!");
             return false;
         }
 
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "降落中...");
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: landing...");
         return true;
     }
 

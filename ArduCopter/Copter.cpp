@@ -184,11 +184,6 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
     SCHED_TASK_CLASS(AC_Sprayer,           &copter.sprayer,               update,         3,  90,  54),
 #endif
 
-//chenjingjing
-#if RUN_CUSTOM_FLIGHT_TASK 
-    SCHED_TASK(my_flight_task_update, 10,    100,  50),
-#endif
-
     SCHED_TASK(three_hz_loop,          3,     75, 57),
 #if AP_SERVORELAYEVENTS_ENABLED
     SCHED_TASK_CLASS(AP_ServoRelayEvents,  &copter.ServoRelayEvents,      update_events, 50,  75,  60),
@@ -270,6 +265,12 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
     // don't delete this, there is an equivalent (virtual) in AP_Vehicle for the non-rate loop case
     SCHED_TASK(update_dynamic_notch_at_specified_rate_main,                       LOOP_RATE, 200, 215),
 #endif
+
+//chenjingjing
+#if RUN_CUSTOM_FLIGHT_TASK 
+    SCHED_TASK(my_flight_task_update, 10,    100,  200),
+#endif
+
 };
 
 void Copter::get_scheduler_tasks(const AP_Scheduler::Task *&tasks,
