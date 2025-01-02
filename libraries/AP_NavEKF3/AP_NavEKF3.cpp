@@ -1442,6 +1442,7 @@ bool NavEKF3::setLatLng(const Location &loc, float posAccuracy, uint32_t timesta
 bool NavEKF3::getHAGL(float &HAGL) const
 {
     if (!core) {
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: EKF3 core is null!");
         return false;
     }
     return core[primary].getHAGL(HAGL);

@@ -28,10 +28,15 @@
             break;
         }
         case 1:
-        {                                                     // 悬停阶段，等待达到目标高度
+        { // 悬停阶段，等待达到目标高度
             float current_altitude; 
-            if(ahrs.get_hagl(current_altitude)){
 
+            // if (!ahrs.get_primary_ekf().is_active()) {
+            // // EKF未激活，等待初始化完成
+            // return;
+            // }
+
+            if(ahrs.get_hagl(current_altitude)){
                 if (current_altitude >= TAKEOFF_ALTITUDE - 0.5f)
                 { // 判定达到目标高度（允许 0.5 米误差）
                     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: reach target altitude, start hover...");
@@ -89,6 +94,18 @@
 
     // 起飞函数
     bool Copter::my_takeoff() {
+
+        // if (!AP::ahrs().is_healthy()) {
+        //     // 等待传感器初始化完成
+        //     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: wait for device init...");
+        //     return false;
+        // }
+        // if (!AP::gps().is_healthy()) {
+        //     // 等待GPS信号
+        //     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: wait for GPS signal...");
+        //     return false;
+        // }
+
         // 切换到 GUIDED 模式
         if (!copter.set_mode(Mode::Number::GUIDED, ModeReason::STARTUP)) {
             GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to change mode to GUIDED!");
@@ -96,7 +113,7 @@
         }
 
         //检查电机解锁情况
-        if (!copter.arming.arm(AP_Arming::Method::MAVLINK, true)) {
+        if (!copter.arming.arm(AP_Arming::Method::MAVLINK, false)) {
             GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: motors arm failed!");
             return false;
         }

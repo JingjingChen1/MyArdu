@@ -711,7 +711,6 @@ void Copter::ten_hz_logging_loop()
         camera_mount.write_log();
     }
 #endif
-
 }
 
 // twentyfive_hz_logging - should be run at 25hz

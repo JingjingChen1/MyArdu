@@ -1667,6 +1667,7 @@ bool AP_AHRS::get_hagl(float &height) const
     switch (active_EKF_type()) {
 #if AP_AHRS_DCM_ENABLED
     case EKFType::DCM:
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: get altitude from DCM");
         return false;
 #endif
 #if HAL_NAVEKF2_AVAILABLE
@@ -1676,6 +1677,7 @@ bool AP_AHRS::get_hagl(float &height) const
 
 #if HAL_NAVEKF3_AVAILABLE
     case EKFType::THREE:
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: get altitude from EKF3");
         return EKF3.getHAGL(height);
 #endif
 
