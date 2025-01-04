@@ -24,30 +24,32 @@
                 return;
             }
             flight_phase = 1;
+            // start_time = AP_HAL::millis64(); // 记录起飞的开始时间
             GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: The copter is taking off...");
             break;
         }
         case 1:
         { // 悬停阶段，等待达到目标高度
-            float current_altitude; 
+            float current_position_D;
+            ahrs.get_relative_position_D_home(current_position_D);
 
-            // if (!ahrs.get_primary_ekf().is_active()) {
-            // // EKF未激活，等待初始化完成
-            // return;
-            // }
+            // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: current altitude %f m", current_position_D);
 
-            if(ahrs.get_hagl(current_altitude)){
-                if (current_altitude >= TAKEOFF_ALTITUDE - 0.5f)
-                { // 判定达到目标高度（允许 0.5 米误差）
-                    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: reach target altitude, start hover...");
-                    my_hover();
-                    start_time = AP_HAL::millis64(); // 记录悬停开始时间
-                    flight_phase = 2;
-                }
-            } else{
-                GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to get current altitude");
+            if (fabsf(-current_position_D - TAKEOFF_ALTITUDE) < 0.5f)
+            { // 判定达到目标高度（允许 0.5 米误差）
+                GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: reach target altitude, start hover...");
+                my_hover();
+                start_time = AP_HAL::millis64(); // 记录悬停开始时间
+                flight_phase = 2;
             }
             
+            // if (AP_HAL::millis64() - start_time > 5000)
+            // { // 起飞 5 秒
+            //     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: start hover...");
+            //     start_time = AP_HAL::millis64(); // 记录悬停的开始时间
+            //     flight_phase = 2;
+            // }
+
             break;
         }
         case 2:
@@ -95,16 +97,16 @@
     // 起飞函数
     bool Copter::my_takeoff() {
 
-        // if (!AP::ahrs().is_healthy()) {
-        //     // 等待传感器初始化完成
-        //     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: wait for device init...");
-        //     return false;
-        // }
-        // if (!AP::gps().is_healthy()) {
-        //     // 等待GPS信号
-        //     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: wait for GPS signal...");
-        //     return false;
-        // }
+        if (!AP::ahrs().healthy()) {
+            // 等待传感器初始化完成
+            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: wait for device init...");
+            return false;
+        }
+        if (!AP::gps().is_healthy()) {
+            // 等待GPS信号
+            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: wait for GPS signal...");
+            return false;
+        }
 
         // 切换到 GUIDED 模式
         if (!copter.set_mode(Mode::Number::GUIDED, ModeReason::STARTUP)) {
@@ -114,7 +116,7 @@
 
         //检查电机解锁情况
         if (!copter.arming.arm(AP_Arming::Method::MAVLINK, false)) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: motors arm failed!");
+            // GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: motors arm failed!");
             return false;
         }
 
@@ -124,7 +126,7 @@
             return false;
         }
 
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: taking off...");
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: taking off...");
         // return false;
         return true;
     }
@@ -133,14 +135,14 @@
     void Copter::my_hover() {
         // 设置目标速度为 0，保持悬停
         copter.set_target_velocity_NED(Vector3f(0.0f, 0.0f, 0.0f));
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: hovering...");
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: hovering...");
     }
 
     // 向前飞行函数
     void Copter::my_fly_forward() {
         // 设置目标速度向前飞行，保持高度
         copter.set_target_velocity_NED(Vector3f(MAX_SPEED, 0.0f, 0.0f));
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: flying forward...");
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: flying forward...");
     }
 
     // 降落函数
@@ -151,7 +153,7 @@
             return false;
         }
 
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: landing...");
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: landing...");
         return true;
     }
 
