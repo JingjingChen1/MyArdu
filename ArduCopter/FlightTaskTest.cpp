@@ -24,7 +24,6 @@
                 return;
             }
             flight_phase = 1;
-            // start_time = AP_HAL::millis64(); // 记录起飞的开始时间
             GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: The copter is taking off...");
             break;
         }
@@ -43,13 +42,6 @@
                 flight_phase = 2;
             }
             
-            // if (AP_HAL::millis64() - start_time > 5000)
-            // { // 起飞 5 秒
-            //     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: start hover...");
-            //     start_time = AP_HAL::millis64(); // 记录悬停的开始时间
-            //     flight_phase = 2;
-            // }
-
             break;
         }
         case 2:
@@ -97,38 +89,27 @@
     // 起飞函数
     bool Copter::my_takeoff() {
 
-        if (!AP::ahrs().healthy()) {
-            // 等待传感器初始化完成
-            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: wait for device init...");
-            return false;
-        }
-        if (!AP::gps().is_healthy()) {
-            // 等待GPS信号
-            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: wait for GPS signal...");
-            return false;
-        }
-
-        // 切换到 GUIDED 模式
-        if (!copter.set_mode(Mode::Number::GUIDED, ModeReason::STARTUP)) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to change mode to GUIDED!");
-            return false;
-        }
-
         //检查电机解锁情况
-        if (!copter.arming.arm(AP_Arming::Method::MAVLINK, false)) {
-            // GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: motors arm failed!");
+        if (copter.motors->armed()) {
+    
+            // 切换到 GUIDED 模式
+            if (!copter.set_mode(Mode::Number::GUIDED, ModeReason::STARTUP)) {
+                GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to change mode to GUIDED!");
+                return false;
+            }           
+
+            // 启动起飞到指定高度
+            if (!copter.start_takeoff(TAKEOFF_ALTITUDE)) {
+                GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to takeoff!");
+                return false;
+            }
+
+            return true;
+
+        }else{
             return false;
         }
 
-        // 启动起飞到指定高度
-        if (!copter.start_takeoff(TAKEOFF_ALTITUDE)) {
-            GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to takeoff!");
-            return false;
-        }
-
-        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: taking off...");
-        // return false;
-        return true;
     }
 
     // 悬停函数
