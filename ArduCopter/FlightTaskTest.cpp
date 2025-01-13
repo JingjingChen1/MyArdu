@@ -3,8 +3,8 @@
 #if RUN_CUSTOM_FLIGHT_TASK 
 
     // 参数配置
-    constexpr float TAKEOFF_ALTITUDE = 20.0f;  // 起飞高度 (米)
-    constexpr float MAX_SPEED = 0.2f;         // 飞行最大速度 (米/秒)
+    constexpr float TAKEOFF_ALTITUDE = 5.0f;  // 起飞高度 (米)
+    constexpr float MAX_SPEED = 1.0f;         // 飞行最大速度 (米/秒)
     constexpr uint32_t FORWARD_DURATION = 6000; // 向前飞行持续时间 (毫秒)
 
     // 状态变量
