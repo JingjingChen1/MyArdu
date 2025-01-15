@@ -15,8 +15,6 @@
     // 主任务函数: 负责执行自定义飞控任务
     void Copter::my_flight_task_update() {
 
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: call my_flight_task_update");
-
         switch (flight_phase)
         {
         case 0:
