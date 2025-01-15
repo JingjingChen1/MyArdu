@@ -15,6 +15,8 @@
     // 主任务函数: 负责执行自定义飞控任务
     void Copter::my_flight_task_update() {
 
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: call my_flight_task_update");
+
         switch (flight_phase)
         {
         case 0:
@@ -92,8 +94,6 @@
         //检查电机解锁情况
         if (copter.motors->armed()) {
     
-            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "FlightTaskTest: Copter is armed!");
-
             // 切换到 GUIDED 模式
             if (!copter.set_mode(Mode::Number::GUIDED, ModeReason::STARTUP)) {
                 GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "FlightTaskTest: unable to change mode to GUIDED!");

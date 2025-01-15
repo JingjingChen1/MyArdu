@@ -1,0 +1,7 @@
+Could not attach to process.  If your uid matches the uid of the target
+process, check the setting of /proc/sys/kernel/yama/ptrace_scope, or try
+again as the root user.  For more details, see /etc/sysctl.d/10-ptrace.conf
+warning: process 79141 is already traced by process 79132
+ptrace: Inappropriate ioctl for device.
+/tmp/gdb.79148:2: Error in sourced command file:
+No stack.
